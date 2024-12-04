@@ -1,18 +1,17 @@
 ## BACK-END ##
 
-# python cache folder
-notes-app-backend/src/__pycache__
+# Python cache bytecode
+*.pyc
+
+# Virtual Environment
+notes-app-backend/venv/
 
 # misc
 notes-app-backend/.env
 
-
-
-
-
-
-
-
+# IDE and editor files
+.vscode/
+.idea/
 
 ## FRONT-END ##
 
@@ -34,7 +33,27 @@ notes-app-frontend/.env.local
 notes-app-frontend/.env.development.local
 notes-app-frontend/.env.test.local
 notes-app-frontend/.env.production.local
-
 notes-app-frontend/npm-debug.log*
 notes-app-frontend/yarn-debug.log*
 notes-app-frontend/yarn-error.log*
+
+# log files
+notes-app-frontend/*.log
+
+# IDE files
+notes-app-frontend/.vscode/
+
+# npm / Yarn lock files (if not committing)
+notes-app-frontend/package-lock.json
+notes-app-frontend/yarn.lock
+
+# environment variables (frontend)
+notes-app-frontend/.env.production
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Python test coverage files
+.coverage
+.coverage.*
