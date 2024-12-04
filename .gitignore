@@ -1,5 +1,40 @@
+## BACK-END ##
+
 # python cache folder
-notes-app-backend/__pycache__/
+notes-app-backend/src/__pycache__
 
 # misc
 notes-app-backend/.env
+
+
+
+
+
+
+
+
+
+## FRONT-END ##
+
+# dependencies
+notes-app-frontend/node_modules
+notes-app-frontend/.pnp
+notes-app-frontend/.pnp.js
+
+# testing
+notes-app-frontend/coverage
+
+# production
+notes-app-frontend/build
+
+# misc
+notes-app-frontend/.DS_Store
+notes-app-frontend/.env
+notes-app-frontend/.env.local
+notes-app-frontend/.env.development.local
+notes-app-frontend/.env.test.local
+notes-app-frontend/.env.production.local
+
+notes-app-frontend/npm-debug.log*
+notes-app-frontend/yarn-debug.log*
+notes-app-frontend/yarn-error.log*
