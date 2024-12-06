@@ -2,9 +2,9 @@ from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.sql import text
-from src.utilities.database import format_query_result
+from utilities.database import format_query_result
 from database import get_db
-from src.routes import api_router
+from routes import api_router
 
 app = FastAPI()
 

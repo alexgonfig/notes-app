@@ -1,10 +1,7 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, func, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String, DateTime, func, ForeignKey
+from database import Base
 
-Base = declarative_base()
-
-
-class Notes(Base):
+class Note(Base):
     __tablename__ = 'notes'
     id = Column(Integer, primary_key=True, index=True, nullable=False)
     user_id = Column(Integer, ForeignKey("users.id"),
