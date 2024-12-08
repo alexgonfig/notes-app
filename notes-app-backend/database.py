@@ -35,6 +35,6 @@ async_session = sessionmaker(
 
 
 # dependency to get a db session manager
-async def get_db():
+async def get_db_session():
     async with async_session() as session:
         yield session

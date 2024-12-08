@@ -1,23 +1,41 @@
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field, EmailStr, model_validator, ValidationError
 from datetime import datetime
 from typing import Optional
 
 
 class UserBase(BaseModel):
-    username: str = Field(..., min_length=3, max_length=50,
-                          description="The username must be between 3 and 50 characters.")
-    email: EmailStr = Field(..., description="A valid email address.")
-    password_hash: str = Field(..., min_length=8, max_length=100,
-                               description="Password hash must be at least 8 characters long.")
+    username: str = Field(
+        ...,
+        min_length=3,
+        max_length=50,
+        description="The username must be between 3 and 50 characters.")
+
+    email: EmailStr = Field(
+        ...,
+        description="A valid email address.")
 
 
 class UserCreate(UserBase):
-    pass  # Inherits properties from UserBase
+    password_hash: str = Field(
+        ...,
+        min_length=8,
+        max_length=100,
+        alias="password",
+        description="Password hash must be at least 8 characters long.")
 
 
 class UserUpdate(UserBase):
+    password_hash: Optional[str] = Field(
+        default=None,
+        min_length=8,
+        max_length=100,
+        alias="password",
+        description="Password hash must be at least 8 characters long.")
+
     updated_at: Optional[datetime] = Field(
-        default=None, description="The timestamp of the last update.")
+        default=None,
+        description="The timestamp of the last update."
+    )
 
 
 class UserResponse(UserBase):
@@ -27,4 +45,41 @@ class UserResponse(UserBase):
     enabled: bool
 
     class Config:
-        orm_mode = True  # This tells Pydantic to treat SQLAlchemy models as dicts
+        orm_mode = True
+        from_attributes = True
+
+
+class UserLogin(BaseModel):
+    username: Optional[str] = Field(
+        None,
+        min_length=3,
+        max_length=50,
+        description="The username must be between 3 and 50 characters."
+    )
+    email: Optional[EmailStr] = Field(
+        None,
+        description="A valid email address."
+    )
+    password: str = Field(
+        ...,
+        min_length=8,
+        max_length=100,
+        description="Password must be at least 8 characters long."
+    )
+
+    @model_validator(mode="before")
+    @classmethod
+    def validate_username_or_email(cls, values):
+        username = values.get('username')
+        email = values.get('email')
+        if not username and not email:
+            raise ValidationError(
+                "Either 'username' or 'email' must be provided.")
+        if username and email:
+            raise ValidationError(
+                "Only one of 'username' or 'email' can be provided.")
+        return values
+
+
+class UserLoginResponse(UserBase):
+    access_token: str
