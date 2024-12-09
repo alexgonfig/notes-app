@@ -1,20 +1,21 @@
 from sqlalchemy.future import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from models.user import User
 from schemas.user import UserCreate, UserResponse, UserLogin, UserLoginResponse
 from services.auth import get_password_hash, verify_password, create_access_token
 
 
-async def get_user_by_username(username: str, db_session) -> User | None:
+async def get_user_by_username(username: str, db_session: AsyncSession) -> User | None:
     result = await db_session.execute(select(User).filter(User.username == username))
     return result.scalars().first()
 
 
-async def get_user_by_email(email: str, db_session) -> User | None:
+async def get_user_by_email(email: str, db_session: AsyncSession) -> User | None:
     result = await db_session.execute(select(User).filter(User.email == email))
     return result.scalars().first()
 
 
-async def create_user(user: UserCreate, db_session) -> UserResponse:
+async def create_user(user: UserCreate, db_session: AsyncSession) -> UserResponse:
     # Check if user email already exists
     existing_user = await get_user_by_username(user.username, db_session)
     if existing_user:
@@ -48,7 +49,7 @@ async def create_user(user: UserCreate, db_session) -> UserResponse:
     return UserResponse.from_orm(new_user)
 
 
-async def auth_user(user: UserLogin, db_session) -> UserLoginResponse:
+async def auth_user(user: UserLogin, db_session: AsyncSession) -> UserLoginResponse:
     # Fetch the user by username first, then by email if necessary
     user_data = await get_user_by_username(user.username, db_session)
     if not user_data:
@@ -56,7 +57,11 @@ async def auth_user(user: UserLogin, db_session) -> UserLoginResponse:
 
     # If no user data found, return a placeholder or simple response for testing
     if not user_data:
-        raise ValueError("User not found")
+        raise ValueError("No se encontró la cuenta de usuario, inténtelo nuevamente...")
+
+    # Verify the password
+    if not verify_password(user.password, user_data.password_hash):
+        raise ValueError("Contraseña incorrecta, inténtelo nuevamente...")
 
     user_access_token = create_access_token(data={"user_id": user_data.id})
 

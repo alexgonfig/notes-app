@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, EmailStr, model_validator, ValidationError
+from pydantic import BaseModel, Field, EmailStr, model_validator
 from datetime import datetime
 from typing import Optional
 
@@ -72,12 +72,11 @@ class UserLogin(BaseModel):
     def validate_username_or_email(cls, values):
         username = values.get('username')
         email = values.get('email')
+
         if not username and not email:
-            raise ValidationError(
-                "Either 'username' or 'email' must be provided.")
+            raise ValueError("Debe ingresar un nombre de usuario o email.")
         if username and email:
-            raise ValidationError(
-                "Only one of 'username' or 'email' can be provided.")
+            raise ValueError("Solo un nombre de usuario o email se puede ingresar a la vez")
         return values
 
 
