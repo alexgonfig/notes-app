@@ -1,26 +1,23 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import Login from "./pages/Login";
+import AppRouter from "./AppRouter";
+import "./App.css";
 
-function App() {
+//function Router
+const App: React.FC = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+
+  const login = () => setIsAuthenticated(true);
+  const logout = () => setIsAuthenticated(false);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>      
+      {isAuthenticated && <button onClick={logout}>Logout</button>}
+      {!isAuthenticated && <button onClick={login}>Login</button>}
+      {!isAuthenticated && <Login />}
+      {isAuthenticated && <AppRouter />}
     </div>
   );
-}
+};
 
 export default App;
