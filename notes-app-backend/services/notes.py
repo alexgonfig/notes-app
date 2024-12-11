@@ -1,4 +1,4 @@
-from sqlalchemy.future import select
+from sqlalchemy import select, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 from models.note import Note
 from schemas.note import NoteCreate, NoteUpdate, NoteResponse
@@ -15,12 +15,14 @@ async def get_note_by_id(note_id: int, user_id: int, db_session: AsyncSession):
     return result.scalars().first()
 
 
-async def get_all_notes(user_id:int, db_session: AsyncSession):
-    result = await db_session.execute(select(Note).where(Note.user_id == user_id))
+async def get_all_notes(user_id: int, db_session: AsyncSession):
+    result = await db_session.execute(
+        select(Note).where(Note.user_id == user_id).order_by(desc(Note.updated_at))
+    )
     return [NoteResponse.from_orm(note) for note in result.scalars()]
 
 
-async def create_note(note: NoteCreate, db_session: AsyncSession, token_payload: dict) -> NoteResponse:
+async def create_note(note: NoteCreate, db_session: AsyncSession, token_payload: dict) -> dict:
     sanitized_title = sanitize_input(note.title)
     sanitized_content = sanitize_input(note.content)
 
@@ -40,7 +42,7 @@ async def create_note(note: NoteCreate, db_session: AsyncSession, token_payload:
     await db_session.refresh(new_note)
 
     # Return the created note as a response
-    return NoteResponse.from_orm(new_note)
+    return {"message": "Nota creada con exito!", "noteId": new_note.id}
 
 
 async def update_note(note_id: int, note: NoteUpdate, db_session: AsyncSession, token_payload: dict) -> NoteResponse:
@@ -62,8 +64,8 @@ async def update_note(note_id: int, note: NoteUpdate, db_session: AsyncSession, 
     # Refresh the note instance to reflect updated fields
     await db_session.refresh(existing_note)
 
-    # Return the updated note as a response
-    return NoteResponse.from_orm(existing_note)
+    # Return the created note as a response
+    return {"message": "Nota actualizada con exito!", "noteId": note_id}
 
 
 async def delete_note(note_id: int, db_session: AsyncSession, token_payload: dict):
@@ -75,7 +77,7 @@ async def delete_note(note_id: int, db_session: AsyncSession, token_payload: dic
     # Delete the note
     await db_session.delete(existing_note)
 
-    #commit the changes
+    # commit the changes
     await db_session.commit()
 
     # Return confirmation response

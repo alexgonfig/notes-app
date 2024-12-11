@@ -4,6 +4,7 @@ import Navbar from "./components/layout/Navbar";
 import Dashboard from "./pages/Dashboard";
 import ViewNote from "./pages/ViewNote";
 import CreateNote from "./pages/CreateNote";
+import EditNote from "./pages/EditNote";
 
 const AppRouter: React.FC = () => {
   return (
@@ -12,7 +13,7 @@ const AppRouter: React.FC = () => {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/createNote" element={<CreateNote />} />
-        <Route path="/editNote/:noteId" element={<h1>Update Note page</h1>} />
+        <Route path="/editNote/:noteId" element={<EditNote />} />
         <Route path="/note/:noteId" element={<ViewNote />} />
       </Routes>
     </Router>

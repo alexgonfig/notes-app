@@ -59,7 +59,7 @@ const NoteCard: React.FC<NoteCardProps> = ({
             {title}
           </Typography>
           <Typography variant="body2">
-            {content}
+            {content.length > 100 ? `${content.substring(0, 100)}...` : content}
           </Typography>
           <Link
             to={`note/${id}`}

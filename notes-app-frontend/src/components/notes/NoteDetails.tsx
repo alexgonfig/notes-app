@@ -40,8 +40,8 @@ const NoteDetails: React.FC<Note> = ({
           </Grid2>
         </Grid2>
 
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-          {content.length > 100 ? `${content.substring(0, 100)}...` : content}
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 3, whiteSpace: 'pre-wrap' }}>
+          {content}
         </Typography>
         <Stack direction="row" spacing={1}>
           <Chip label={"Creado el: " + new Date(created_at).toLocaleString()} />

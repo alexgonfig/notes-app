@@ -3,25 +3,36 @@ import {
   Button,
   TextField,
   Box,
-  Typography,
   Card,
   CardContent,
+  Typography,
 } from "@mui/material";
 import { fetchFromBackend } from "../../services/httpFetch";
-import { useDispatch } from "react-redux";
-import { login } from "../../store/slices/authSlice";
+import { Note } from "../../services/notes";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
+import { useNavigate } from "react-router-dom";
 
-type Note = {
+type NoteFormProps = {
   title?: string;
   content?: string;
+  noteId?: string | number;
 };
 
-const NoteForm: React.FC<Note> = ({ title, content }) => {
+const NoteForm: React.FC<NoteFormProps> = ({ title, content, noteId }) => {
+  const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [formData, setFormData] = useState<Note>({
+  const access_token = useSelector(
+    (state: RootState) => state.auth.access_token
+  );
+  const [formData, setFormData] = useState({
     title: title || "",
     content: content || "",
   });
+
+  const apiPath = noteId ? `/api/notes/${noteId}` : "/api/notes/";
+  const method = noteId ? "PUT" : "POST";
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -31,7 +42,30 @@ const NoteForm: React.FC<Note> = ({ title, content }) => {
     }));
   };
 
-  const handleSubmit = () => {};
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    try {
+      setIsLoading(true);
+
+      const note = { ...formData };
+      const response = await fetchFromBackend(apiPath, method, note, {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      });
+
+      if (response.noteId) {
+        // add success alert or something then redirect to note
+        navigate("/note/" + response.noteId);
+      } else {
+        throw new Error(response.message);
+      }
+    } catch (error) {
+      console.error(error);
+      setIsLoading(false);
+      setError("An error occurred while saving the note: " + error);
+    }
+  };
 
   return (
     <Card>
@@ -70,7 +104,7 @@ const NoteForm: React.FC<Note> = ({ title, content }) => {
               type="text"
               id="content"
               multiline
-              rows={6}
+              rows={12}
               value={formData.content}
               onChange={handleChange}
               variant="standard"
@@ -92,6 +126,8 @@ const NoteForm: React.FC<Note> = ({ title, content }) => {
               {isLoading ? "Cargando..." : "Guardar"}
             </Button>
           </Box>
+
+          {error && <Typography color="error">{error}</Typography>}
         </Box>
       </CardContent>
     </Card>
