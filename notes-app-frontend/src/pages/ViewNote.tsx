@@ -3,13 +3,14 @@ import Swal from "sweetalert2";
 import { Typography, Container } from "@mui/material";
 import { Note, fetchNoteById } from "../services/notes";
 import { useNavigate, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store/store";
 import NoteDetails from "../components/notes/NoteDetails";
 import { deleteNote } from "../services/notes";
 import NoteNotFound from "../components/login/NoteNotFound";
 
 const ViewNote: React.FC = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [note, setNote] = useState<Note | undefined>();
   const { noteId } = useParams();
@@ -24,12 +25,11 @@ const ViewNote: React.FC = () => {
   const fetchNote = async () => {
     try {
       setIsLoading(true);
-      const note = await fetchNoteById(access_token, noteId, signal);
+      const note = await fetchNoteById(access_token, noteId, signal, dispatch);
       setNote(note);
       setIsLoading(false);
     } catch (error) {
       console.error(error);
-      alert(error);
       setIsLoading(false);
     }
   };

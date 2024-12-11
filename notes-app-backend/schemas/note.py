@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, model_validator, ValidationError
 from datetime import datetime
 from typing import Optional
 
@@ -8,26 +8,35 @@ class NoteBase(BaseModel):
         ...,
         min_length=3,
         max_length=50,
-        description="The note title must be between 3 and 50 characters.",
+        description="El título de la nota debe contener entre 3 y 50 caracteres.",
     )
     content: str = Field(
         ...,
         min_length=3,
-        description="The note content must be at least 3 characters long.",
+        description="El contenido de la nota debe contener un minimo de 3 caracteres.",
     )
 
-"""     @model_validator(mode="before")
+    @model_validator(mode="before")
     @classmethod
-    def validate_title_and_content(cls, values):
+    def validate_title_content(cls, values):
         title = values.get('title')
         content = values.get('content')
 
-        if not title or not title.strip():
+        if not title:
             raise ValueError("Debe ingresar un titulo para la nota")
-        if not content or not content.strip():
+
+        if not content:
             raise ValueError("Debe ingresar contenido para la nota")
 
-        return values """
+        if len(title) < 3 or len(title) > 50:
+            raise ValueError(
+                "El título de la nota debe tener entre 3 y 50 caracteres.")
+
+        if len(content) < 3:
+            raise ValueError(
+                "El contenido de la nota debe tener al menos 3 caracteres.")
+
+        return values
 
 
 class NoteCreate(NoteBase):
@@ -38,9 +47,11 @@ class NoteUpdate(NoteBase):
     updated_at: Optional[datetime] = None
 
 
-class NoteResponse(NoteBase):
+class NoteResponse(BaseModel):
     id: int
     user_id: int
+    title: str
+    content: str
     created_at: datetime
     updated_at: datetime
 

@@ -1,4 +1,5 @@
 import { fetchFromBackend } from "./httpFetch";
+import { Dispatch } from "redux";
 import Swal from "sweetalert2";
 
 export type Note = {
@@ -12,19 +13,26 @@ export type Note = {
 
 const fetchUserNotes = async (
   token: string | null | undefined,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  dispatch?: Dispatch
 ): Promise<Note[]> => {
   if (!token) {
     throw new Error("La sesión no cuenta con token de acceso");
   }
 
   try {
-    const response = await fetchFromBackend("/api/notes", "GET", undefined, {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const response = await fetchFromBackend(
+      "/api/notes",
+      "GET",
+      undefined,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
       signal,
-    });
+      dispatch
+    );
 
     if (!Array.isArray(response)) {
       throw new Error(
@@ -46,7 +54,8 @@ const fetchUserNotes = async (
 const fetchNoteById = async (
   token: string | null | undefined,
   noteId: string | number | null | undefined,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  dispatch?: Dispatch
 ): Promise<Note> => {
   if (!token) {
     throw new Error("La sesión no cuenta con token de acceso");
@@ -65,8 +74,9 @@ const fetchNoteById = async (
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        signal,
-      }
+      },
+      signal,
+      dispatch
     );
 
     return response;
@@ -83,7 +93,8 @@ const fetchNoteById = async (
 const deleteNote = async (
   noteId: string | number | null | undefined,
   token: string | null | undefined,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  dispatch?: Dispatch
 ) => {
   if (!token) {
     throw new Error("La sesión no cuenta con token de acceso");
@@ -115,9 +126,10 @@ const deleteNote = async (
       {
         headers: {
           Authorization: `Bearer ${token}`,
-        },
-        signal,
-      }
+        }        
+      },
+      signal,
+      dispatch
     );
 
     await Swal.fire({

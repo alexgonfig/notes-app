@@ -48,7 +48,7 @@ const NoteCard: React.FC<NoteCardProps> = ({
             </Grid2>
             <Grid2 size="auto" sx={{ ml: "auto" }}>
               <CardActions>
-                <Link to={`/editNote/${id}`}>
+                <Link to={`/editNote/${id}`} style={{ marginRight: "18px" }}>
                   <EditIcon color="primary" />
                 </Link>
                 <DeleteIcon

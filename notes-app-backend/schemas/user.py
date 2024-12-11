@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, EmailStr, model_validator
+from pydantic import BaseModel, Field, EmailStr, model_validator, validator
 from datetime import datetime
 from typing import Optional
 
@@ -8,11 +8,11 @@ class UserBase(BaseModel):
         ...,
         min_length=3,
         max_length=50,
-        description="The username must be between 3 and 50 characters.")
+        description="El nombre de usuario debe tener entre 3 y 50 caracteres.")
 
     email: EmailStr = Field(
         ...,
-        description="A valid email address.")
+        description="Debe ingresar una dirección valida de email.")
 
 
 class UserCreate(UserBase):
@@ -21,21 +21,33 @@ class UserCreate(UserBase):
         min_length=8,
         max_length=100,
         alias="password",
-        description="Password hash must be at least 8 characters long.")
+        description="La contraseña debe tener un minimo de 8 caracteres.")
 
+    @model_validator(mode="before")
+    @classmethod
+    def validate_user_create_data(cls, values):
+        username = values.get('username')
+        email = values.get('email')
+        password = values.get('password')
 
-class UserUpdate(UserBase):
-    password_hash: Optional[str] = Field(
-        default=None,
-        min_length=8,
-        max_length=100,
-        alias="password",
-        description="Password hash must be at least 8 characters long.")
+        if not username:
+            raise ValueError("Debe ingresar un nombre de usuario")
 
-    updated_at: Optional[datetime] = Field(
-        default=None,
-        description="The timestamp of the last update."
-    )
+        if not email:
+            raise ValueError("Debe ingresar un email")
+
+        if not password:
+            raise ValueError("Debe ingresar una contraseña")
+
+        if len(username) < 3 or len(username) > 50:
+            raise ValueError(
+                "El nombre de usuario debe tener entre 3 y 50 caracteres.")
+
+        if len(password) < 8:
+            raise ValueError(
+                "La contraseña debe tener un minimo de 8 caracteres.")
+
+        return values
 
 
 class UserResponse(UserBase):
@@ -54,17 +66,17 @@ class UserLogin(BaseModel):
         None,
         min_length=3,
         max_length=50,
-        description="The username must be between 3 and 50 characters."
+        description="El nombre de usuario debe tener entre 3 y 50 caracteres."
     )
     email: Optional[EmailStr] = Field(
         None,
-        description="A valid email address."
+        description="Debe ingresar una dirección valida de email."
     )
     password: str = Field(
         ...,
         min_length=8,
         max_length=100,
-        description="Password must be at least 8 characters long."
+        description="La contraseña debe tener un minimo de 8 caracteres."
     )
 
     @model_validator(mode="before")
@@ -76,7 +88,8 @@ class UserLogin(BaseModel):
         if not username and not email:
             raise ValueError("Debe ingresar un nombre de usuario o email.")
         if username and email:
-            raise ValueError("Solo un nombre de usuario o email se puede ingresar a la vez")
+            raise ValueError(
+                "Solo un nombre de usuario o email se puede ingresar a la vez")
         return values
 
 

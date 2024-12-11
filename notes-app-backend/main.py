@@ -1,9 +1,8 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.exceptions import RequestValidationError
 from routes import api_router
-from starlette.exceptions import HTTPException as StarletteHTTPException
-from pydantic import ValidationError
 import os
 
 
@@ -24,32 +23,33 @@ app.add_middleware(
 )
 
 
-# ValidationError exception handler
-@app.exception_handler(ValidationError)
-async def custom_validation_exception_handler(request: Request, exc: ValidationError):
-    # Check if the error type is a missing body
-    errors = exc.errors()
-    for error in errors:
-        if error["type"] == "missing" and error["loc"] == ("body",):
-            return JSONResponse(
-                status_code=422,
-                content={
-                    "message": "El cuerpo de la solicitud no puede estar vacío. Por favor, proporcione datos válidos."},
-            )
-    # Default handling for other validation errors
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    # Custom Spanish error messages
+    error_messages = {
+        'string_too_short': 'El valor de {loc} debe tener al menos {limit_value} caracteres.',
+        'string_too_long': 'El valor de {loc} debe tener como máximo {limit_value} caracteres.',
+        'value_error.missing': 'El campo {loc} es obligatorio.',
+        'type_error': 'El campo {loc} debe ser de tipo {type}.'
+    }
+
+    custom_errors = [
+        {
+            "message": error_messages.get(error["type"], error["msg"]).format(
+                # Get only the last element in loc (field name)
+                loc=error["loc"][-1],
+                limit_value=error.get("ctx", {}).get("limit_value", ""),
+                type=error.get("type", ""),
+            ),
+            # Get only the last element in loc (field name)
+            "field": error["loc"][-1]
+        }
+        for error in exc.errors()
+    ]
+
     return JSONResponse(
         status_code=422,
-        content={"message": "Hubo un error de validación.", "details": errors},
-    )
-
-
-# Generic expection handler
-@app.exception_handler(StarletteHTTPException)
-async def custom_http_exception_handler(request: Request, exc: StarletteHTTPException):
-    # Custom handling for HTTPException
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"message": exc.detail},  # Custom format for error response
+        content={"errors": custom_errors}
     )
 
 

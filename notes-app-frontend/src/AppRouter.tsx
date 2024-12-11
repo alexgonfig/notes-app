@@ -9,7 +9,7 @@ import NotFound from "./pages/NotFound";
 
 const AppRouter: React.FC = () => {
   return (
-    <Router>
+    <>
       <Navbar />
       <Routes>
         <Route path="/" element={<Dashboard />} />
@@ -18,7 +18,7 @@ const AppRouter: React.FC = () => {
         <Route path="/note/:noteId" element={<ViewNote />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
-    </Router>
+    </>
   );
 };
 

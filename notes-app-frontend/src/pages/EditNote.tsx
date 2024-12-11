@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Typography, Container } from "@mui/material";
 import { Note, fetchNoteById } from "../services/notes";
 import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store/store";
 import NoteForm from "../components/notes/NoteForm";
 import NoteNotFound from "../components/login/NoteNotFound";
 
 const EditNote: React.FC = () => {
+  const dispatch = useDispatch();
   const [note, setNote] = useState<Note | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { noteId } = useParams();
@@ -21,13 +22,12 @@ const EditNote: React.FC = () => {
   const fetchNote = async () => {
     try {
       setIsLoading(true);
-      const note = await fetchNoteById(access_token, noteId, signal);
+      const note = await fetchNoteById(access_token, noteId, signal, dispatch);
       setNote(note);
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
       console.error(error);
-      alert(error);
     }
   };
 

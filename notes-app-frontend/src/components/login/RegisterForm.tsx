@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import Swal from "sweetalert2";
 import FormIcon from "./FormIcon";
+import { useDispatch } from "react-redux";
 import { fetchFromBackend } from "../../services/httpFetch";
 
 type RegisterData = {
@@ -25,6 +26,7 @@ type RegisterFormProps = {
 const RegisterForm: React.FC<RegisterFormProps> = (
   props: RegisterFormProps
 ) => {
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState<RegisterData>({
     username: "",
@@ -55,14 +57,17 @@ const RegisterForm: React.FC<RegisterFormProps> = (
       const response = await fetchFromBackend<RegisterData>(
         "/api/auth/register",
         "POST",
-        formData
+        formData,
+        {},
+        undefined,
+        dispatch
       );
 
       console.log(response);
       setIsLoading(false);
       await Swal.fire({
         title: "Bien!",
-        text:"Registro exitoso!, Ahora puedes ingresar!",
+        text: "Registro exitoso!, Ahora puedes ingresar!",
         icon: "success",
         confirmButtonText: "Aceptar",
       });
@@ -75,7 +80,6 @@ const RegisterForm: React.FC<RegisterFormProps> = (
 
       props.onShowLogin();
     } catch (error) {
-      console.error(error);
       setIsLoading(false);
       Swal.fire({
         title: "Error!",

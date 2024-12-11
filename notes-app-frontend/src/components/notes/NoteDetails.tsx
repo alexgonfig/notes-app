@@ -13,8 +13,8 @@ import { Link } from "react-router-dom";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-interface NoteDetailsProps extends Note{
-  onDeleteHandler: ()=>void;
+interface NoteDetailsProps extends Note {
+  onDeleteHandler: () => void;
 }
 
 const NoteDetails: React.FC<NoteDetailsProps> = ({
@@ -24,8 +24,7 @@ const NoteDetails: React.FC<NoteDetailsProps> = ({
   created_at,
   updated_at,
   onDeleteHandler,
-}) => {  
-
+}) => {
   return (
     <Card>
       <CardContent>
@@ -37,10 +36,14 @@ const NoteDetails: React.FC<NoteDetailsProps> = ({
           </Grid2>
           <Grid2 size="auto" sx={{ ml: "auto" }}>
             <CardActions>
-              <Link to={`/editNote/${id}`}>
+              <Link to={`/editNote/${id}`} style={{marginRight:'18px'}}>
                 <EditIcon color="primary" />
               </Link>
-              <DeleteIcon onClick={onDeleteHandler} color="error" />
+              <DeleteIcon
+                onClick={onDeleteHandler}
+                color="error"
+                sx={{ cursor: "pointer"}}
+              />
             </CardActions>
           </Grid2>
         </Grid2>

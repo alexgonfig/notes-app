@@ -7,8 +7,9 @@ import {
   CardContent,
   Typography,
 } from "@mui/material";
+import Swal from "sweetalert2";
 import { fetchFromBackend } from "../../services/httpFetch";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 
@@ -19,6 +20,7 @@ type NoteFormProps = {
 };
 
 const NoteForm: React.FC<NoteFormProps> = ({ title, content, noteId }) => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -47,14 +49,26 @@ const NoteForm: React.FC<NoteFormProps> = ({ title, content, noteId }) => {
       setIsLoading(true);
 
       const note = { ...formData };
-      const response = await fetchFromBackend(apiPath, method, note, {
-        headers: {
-          Authorization: `Bearer ${access_token}`,
+      const response = await fetchFromBackend(
+        apiPath,
+        method,
+        note,
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
         },
-      });
+        undefined,
+        dispatch
+      );
 
       if (response.noteId) {
-        // add success alert or something then redirect to note
+        await Swal.fire({
+          title: "Bien!",
+          text: "Se guardaron con exito los datos de la nota!",
+          icon: "success",
+          confirmButtonText: "Aceptar",
+        });
         navigate("/note/" + response.noteId);
       } else {
         throw new Error(response.message);
@@ -62,7 +76,17 @@ const NoteForm: React.FC<NoteFormProps> = ({ title, content, noteId }) => {
     } catch (error) {
       console.error(error);
       setIsLoading(false);
-      setError("An error occurred while saving the note: " + error);
+      setError("" + error);
+      Swal.fire({
+        title: "Error!",
+        text:
+          error instanceof Error
+            ? error.message
+            : String(error) ||
+              "Se produjo un error inesperado. Inténtalo de nuevo.",
+        icon: "error",
+        confirmButtonText: "Aceptar",
+      });
     }
   };
 
@@ -86,7 +110,7 @@ const NoteForm: React.FC<NoteFormProps> = ({ title, content, noteId }) => {
               required
               fullWidth
               id="title"
-              label="Titulo de la nota"
+              label="Título de la nota"
               name="title"
               autoComplete="title"
               autoFocus

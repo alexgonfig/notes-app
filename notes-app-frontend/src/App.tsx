@@ -1,19 +1,21 @@
 import React, { useEffect } from "react";
+import Swal from "sweetalert2";
 import Login from "./pages/Login";
 import AppRouter from "./AppRouter";
 import { Box } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "./store/store";
-import { login } from "./store/slices/authSlice";
+import { login, logout } from "./store/slices/authSlice";
 import { fetchFromBackend } from "./services/httpFetch";
+import { useLocation } from "react-router-dom";
 import "./App.css";
 
-//function Router
 const App: React.FC = () => {
   const dispatch = useDispatch();
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated
   );
+  const location = useLocation();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -33,13 +35,23 @@ const App: React.FC = () => {
                 Authorization: `Bearer ${access_token}`,
               },
             },
-            signal
+            signal,
+            dispatch
           );
 
           dispatch(login({ ...response, access_token }));
         }
       } catch (error) {
         console.error(error);
+        Swal.fire({
+          text:
+            error instanceof Error
+              ? error.message
+              : String(error) ||
+                "Se produjo un error inesperado. Inténtalo de nuevo.",
+          icon: "error",
+          confirmButtonText: "Aceptar",
+        })
       }
     };
 
@@ -49,6 +61,7 @@ const App: React.FC = () => {
       controller.abort();
     };
   }, [dispatch]);
+
   return (
     <div>
       {!isAuthenticated && <Login />}
@@ -65,6 +78,5 @@ const App: React.FC = () => {
     </div>
   );
 };
-
 
 export default App;

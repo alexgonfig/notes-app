@@ -21,7 +21,7 @@ def get_password_hash(password):
 
 
 # create a JWT token
-def create_access_token(data: dict, expires_delta: timedelta = timedelta(minutes=30)):
+def create_access_token(data: dict, expires_delta: timedelta = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)):
     to_encode = data.copy()
     expire = datetime.utcnow() + expires_delta
     to_encode.update({"exp": expire})
@@ -53,7 +53,7 @@ def validate_auth(request: Request):
         return payload
     except ExpiredSignatureError:
         raise HTTPException(
-            status_code=401, detail="Token has expired"
+            status_code=401, detail="La sesión del usuario ha expirado"
         )
     except JWTError:
         raise HTTPException(

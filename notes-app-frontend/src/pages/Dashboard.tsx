@@ -12,10 +12,11 @@ import { Add as AddIcon } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import NoteCard from "../components/notes/NoteCard";
 import { Note, fetchUserNotes, deleteNote } from "../services/notes";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store/store";
 
 const Dashboard: React.FC = () => {
+  const dispatch = useDispatch();
   const [notes, setNotes] = useState<Note[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const access_token = useSelector(
@@ -28,7 +29,7 @@ const Dashboard: React.FC = () => {
   const fetchNotes = async () => {
     try {
       setIsLoading(true);
-      const notes = await fetchUserNotes(access_token, signal);
+      const notes = await fetchUserNotes(access_token, signal, dispatch);
       setNotes(notes);
       setIsLoading(false);
     } catch (error) {
@@ -49,7 +50,7 @@ const Dashboard: React.FC = () => {
 
   const handleDelete = async (noteId: string | number) => {
     try {
-      const isDeleted = await deleteNote(noteId, access_token, signal);
+      const isDeleted = await deleteNote(noteId, access_token, signal, dispatch);
       if (isDeleted) {
         await fetchNotes();
       }
