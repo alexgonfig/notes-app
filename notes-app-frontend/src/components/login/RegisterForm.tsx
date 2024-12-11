@@ -8,18 +8,25 @@ import {
   CardContent,
 } from "@mui/material";
 import FormIcon from "./FormIcon";
+import { fetchFromBackend } from "../../services/httpFetch";
 
 type RegisterData = {
-  name: string;
+  username: string;
   password: string;
   email: string;
   repeatPassword: string;
 };
 
-const RegisterForm: React.FC = () => {
+type RegisterFormProps = {
+  onShowLogin: () => void;
+};
+
+const RegisterForm: React.FC<RegisterFormProps> = (
+  props: RegisterFormProps
+) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState<RegisterData>({
-    name: "",
+    username: "",
     password: "",
     email: "",
     repeatPassword: "",
@@ -33,23 +40,46 @@ const RegisterForm: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setIsLoading(true);
-    // TODO: Authenticate user with provided credentials
-    console.log(
-      `registering user name:${formData.name}, email: ${formData.email}, password: ${formData.password}`
-    );
-    setTimeout(() => {
+    try {
+      setIsLoading(true);
+
+      // validate password inputs
+      if (formData.password !== formData.repeatPassword) {
+        throw new Error("Las contraseñas no coinciden");
+      }
+
+      // API call
+      const response = await fetchFromBackend<RegisterData>(
+        "/api/auth/register",
+        "POST",
+        formData
+      );
+
+      console.log(response);
       setIsLoading(false);
-    }, 3000);
+      alert("Registro exitoso!, Ahora puedes ingresar!");
+      setFormData({
+        username: "",
+        password: "",
+        email: "",
+        repeatPassword: "",
+      });
+
+      props.onShowLogin();
+    } catch (error) {
+      console.error(error);
+      setIsLoading(false);
+      alert(error);
+    }
   };
 
   return (
     <Card
       sx={{
         borderRadius: 4,
-        boxShadow: "0 3px 5px 2px rgba(255, 105, 135, .3)",
+        boxShadow: "0 3px 5px 2px rgba(0,0,0, .3)",
         padding: 3,
         paddingTop: 4,
       }}
@@ -69,7 +99,7 @@ const RegisterForm: React.FC = () => {
           <Box
             component="form"
             onSubmit={handleSubmit}
-            sx={{ mt: 1, width: "100%" }}
+            sx={{ mt: 1, width: "100%", px: 2 }}
           >
             <TextField
               margin="normal"
@@ -78,11 +108,12 @@ const RegisterForm: React.FC = () => {
               type="text"
               id="name"
               label="Nombre de usuario"
-              name="name"
-              autoComplete="name"
+              name="username"
+              autoComplete="username"
               autoFocus
-              value={formData.name}
+              value={formData.username}
               onChange={handleChange}
+              variant="standard"
             />
             <TextField
               margin="normal"
@@ -95,6 +126,7 @@ const RegisterForm: React.FC = () => {
               autoComplete="email"
               value={formData.email}
               onChange={handleChange}
+              variant="standard"
             />
             <TextField
               margin="normal"
@@ -106,6 +138,7 @@ const RegisterForm: React.FC = () => {
               id="password"
               value={formData.password}
               onChange={handleChange}
+              variant="standard"
             />
             <TextField
               margin="normal"
@@ -117,6 +150,7 @@ const RegisterForm: React.FC = () => {
               id="repeatPassword"
               value={formData.repeatPassword}
               onChange={handleChange}
+              variant="standard"
             />
             <Button
               type="submit"
@@ -135,6 +169,18 @@ const RegisterForm: React.FC = () => {
               {isLoading ? "Cargando..." : "Registrarse"}
             </Button>
           </Box>
+          <p>
+            ¿Ya tienes una cuenta de usuario?{" "}
+            <Button
+              type="button"
+              variant="text"
+              onClick={() => {
+                props.onShowLogin();
+              }}
+            >
+              Ingresa acá
+            </Button>
+          </p>
         </Box>
       </CardContent>
     </Card>

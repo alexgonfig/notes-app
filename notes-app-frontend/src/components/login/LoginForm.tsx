@@ -8,19 +8,32 @@ import {
   CardContent,
 } from "@mui/material";
 import FormIcon from "./FormIcon";
+import { fetchFromBackend } from "../../services/httpFetch";
+import { useDispatch } from "react-redux";
+import { login } from "../../store/slices/authSlice";
 
-export type LoginData = {
-  name: string;
+export type LoginFormData = {
+  username_or_email: string;
   password: string;
 };
 
-const LoginForm: React.FC = () => {
+export type LoginData = {
+  username?: string;
+  email?: string;
+  password: string;
+};
+
+type LoginFormProps = {
+  onShowRegister: () => void;
+};
+
+const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [formData, setFormData] = useState<LoginData>({
-    name: "",
+  const [formData, setFormData] = useState<LoginFormData>({
+    username_or_email: "",
     password: "",
   });
-
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormData((prevFormData) => ({
@@ -29,23 +42,45 @@ const LoginForm: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const isEmail = (input: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(input);
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setIsLoading(true);
-    // TODO: Authenticate user with provided credentials
-    console.log(
-      `Logging in with name: ${formData.name} and password: ${formData.password}`
-    );
-    setTimeout(() => {
+    try {
+      setIsLoading(true);
+
+      let loginData: LoginData = { password: formData.password };
+
+      // check if input is username or email
+      if (isEmail(formData.username_or_email)) {
+        loginData.email = formData.username_or_email;
+      } else {
+        loginData.username = formData.username_or_email;
+      }
+
+      // API call
+      const response = await fetchFromBackend<LoginData>(
+        "/api/auth/login",
+        "POST",
+        loginData
+      );
+
+      dispatch(login({ ...response }));
+    } catch (error) {
+      console.error(error);
       setIsLoading(false);
-    }, 3000);
+      alert(error);
+    }
   };
 
   return (
     <Card
       sx={{
         borderRadius: 4,
-        boxShadow: "0 3px 5px 2px rgba(255, 105, 135, .3)",
+        boxShadow: "0 3px 5px 2px rgba(0,0,0, .3)",
         padding: 3,
         paddingTop: 4,
       }}
@@ -65,7 +100,7 @@ const LoginForm: React.FC = () => {
           <Box
             component="form"
             onSubmit={handleSubmit}
-            sx={{ mt: 1, width: "100%" }}
+            sx={{ mt: 1, width: "100%", px: 2 }}
           >
             <TextField
               margin="normal"
@@ -73,11 +108,12 @@ const LoginForm: React.FC = () => {
               fullWidth
               id="name"
               label="Nombre de usuario o Email"
-              name="name"
-              autoComplete="name"
+              name="username_or_email"
+              autoComplete="username_or_email"
               autoFocus
-              value={formData.name}
+              value={formData.username_or_email}
               onChange={handleChange}
+              variant="standard"
             />
             <TextField
               margin="normal"
@@ -89,6 +125,7 @@ const LoginForm: React.FC = () => {
               id="password"
               value={formData.password}
               onChange={handleChange}
+              variant="standard"
             />
             <Button
               type="submit"
@@ -107,6 +144,18 @@ const LoginForm: React.FC = () => {
               {isLoading ? "Cargando..." : "Ingresar"}
             </Button>
           </Box>
+          <p>
+            ¿No tienes una cuenta de usuario?{" "}
+            <Button
+              type="button"
+              variant="text"
+              onClick={() => {
+                props.onShowRegister();
+              }}
+            >
+              Registrate acá
+            </Button>
+          </p>
         </Box>
       </CardContent>
     </Card>

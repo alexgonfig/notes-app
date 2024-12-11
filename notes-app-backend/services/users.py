@@ -5,6 +5,11 @@ from schemas.user import UserCreate, UserResponse, UserLogin, UserLoginResponse
 from services.auth import get_password_hash, verify_password, create_access_token
 
 
+async def get_user_by_id(user_id: int, db_session: AsyncSession) -> User | None:
+    result = await db_session.execute(select(User).filter(User.id == user_id))
+    return result.scalars().first()
+
+
 async def get_user_by_username(username: str, db_session: AsyncSession) -> User | None:
     result = await db_session.execute(select(User).filter(User.username == username))
     return result.scalars().first()
@@ -57,7 +62,8 @@ async def auth_user(user: UserLogin, db_session: AsyncSession) -> UserLoginRespo
 
     # If no user data found, return a placeholder or simple response for testing
     if not user_data:
-        raise ValueError("No se encontró la cuenta de usuario, inténtelo nuevamente...")
+        raise ValueError(
+            "No se encontró la cuenta de usuario, inténtelo nuevamente...")
 
     # Verify the password
     if not verify_password(user.password, user_data.password_hash):
@@ -68,6 +74,18 @@ async def auth_user(user: UserLogin, db_session: AsyncSession) -> UserLoginRespo
     # Return user data
     return UserLoginResponse(
         username=user_data.username,
-        email=user_data.email,        
+        email=user_data.email,
         access_token=user_access_token
     )
+
+
+async def get_user_data(user_id: int, db_session: AsyncSession)-> UserResponse:
+    # Check if user exists
+    existing_user = await get_user_by_id(user_id, db_session)
+    if not existing_user:
+        raise ValueError(
+            "No se encontraron datos del usuario...")
+
+    # Return the user as response
+    return UserResponse.from_orm(existing_user)
+    

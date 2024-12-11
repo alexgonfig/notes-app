@@ -1,11 +1,27 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from routes import api_router
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from pydantic import ValidationError
+import os
 
 
 app = FastAPI()
+
+# allowed origins
+origins = [
+    os.getenv("FRONTEND_ORIGIN"),  # frontend origin
+    "http://localhost:3000",  # fallback alternate frontend origin
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["*"],
+)
 
 
 # ValidationError exception handler

@@ -1,11 +1,20 @@
 import React, { useState } from "react";
-import { Box, Container, CssBaseline, Tab, Tabs } from "@mui/material";
+import { Box, Container, CssBaseline, Tab, Tabs, Link } from "@mui/material";
 import { indigo } from "@mui/material/colors";
 import LoginForm from "../components/login/LoginForm";
 import RegisterForm from "../components/login/RegisterForm";
 
 const Login: React.FC = () => {
   const [isLogin, setIsLogin] = useState<boolean>(true);
+
+  const showLogin = () => {
+    setIsLogin(true);
+  };
+
+  const showRegister = () => {
+    setIsLogin(false);
+  };
+
   return (
     <Box
       sx={{
@@ -55,8 +64,8 @@ const Login: React.FC = () => {
           </Tabs>
         </Box>
 
-        {isLogin && <LoginForm />}
-        {!isLogin && <RegisterForm />}
+        {isLogin && <LoginForm onShowRegister={showRegister} />}
+        {!isLogin && <RegisterForm onShowLogin={showLogin} />}
       </Container>
     </Box>
   );
