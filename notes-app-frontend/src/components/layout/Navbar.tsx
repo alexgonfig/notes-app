@@ -70,20 +70,20 @@ const Navbar: React.FC = () => {
             <LogoutIcon sx={{ mr: 1 }} /> Cerrar Sesión
           </MenuItem>
         </Menu>
+        <Link to="/createNote">
+          <Fab
+            color="primary"
+            aria-label="add"
+            sx={{
+              position: "fixed",
+              bottom: 16,
+              right: 16,
+            }}
+          >
+            <AddIcon />
+          </Fab>
+        </Link>
       </Toolbar>
-      <Link to="/createNote">
-        <Fab
-          color="primary"
-          aria-label="add"
-          sx={{
-            position: "fixed",
-            bottom: 16,
-            right: 16,
-          }}
-        >
-          <AddIcon />
-        </Fab>
-      </Link>
     </AppBar>
   );
 };

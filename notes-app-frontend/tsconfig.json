@@ -21,8 +21,11 @@
     "jsx": "react-jsx",
     "noImplicitAny": false, // Temporarily disable if `state` has implicit `any` issues
     "strictNullChecks": false, // Temporarily disable for null/undefined issues
+    "typeRoots": ["node_modules/@types"],
+    "types": ["node"]
   },
   "include": [
     "src"
-  ]
+  ],
+  
 }

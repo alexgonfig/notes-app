@@ -48,7 +48,7 @@ const App: React.FC = () => {
     return () => {
       controller.abort();
     };
-  }, []);
+  }, [dispatch]);
   return (
     <div>
       {!isAuthenticated && <Login />}
@@ -65,5 +65,6 @@ const App: React.FC = () => {
     </div>
   );
 };
+
 
 export default App;

@@ -8,7 +8,6 @@ import {
   Typography,
 } from "@mui/material";
 import { fetchFromBackend } from "../../services/httpFetch";
-import { Note } from "../../services/notes";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import { useNavigate } from "react-router-dom";

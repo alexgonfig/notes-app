@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Note, fetchNoteById } from "../../services/notes";
+import React from "react";
+import { Note } from "../../services/notes";
 import {
   Typography,
   Grid2,
@@ -10,17 +10,22 @@ import {
   Stack,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-const NoteDetails: React.FC<Note> = ({
+interface NoteDetailsProps extends Note{
+  onDeleteHandler: ()=>void;
+}
+
+const NoteDetails: React.FC<NoteDetailsProps> = ({
   id,
   title,
   content,
   created_at,
   updated_at,
-}) => {
+  onDeleteHandler,
+}) => {  
+
   return (
     <Card>
       <CardContent>
@@ -35,12 +40,16 @@ const NoteDetails: React.FC<Note> = ({
               <Link to={`/editNote/${id}`}>
                 <EditIcon color="primary" />
               </Link>
-              <DeleteIcon color="error" />
+              <DeleteIcon onClick={onDeleteHandler} color="error" />
             </CardActions>
           </Grid2>
         </Grid2>
 
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 3, whiteSpace: 'pre-wrap' }}>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{ mb: 3, whiteSpace: "pre-wrap" }}
+        >
           {content}
         </Typography>
         <Stack direction="row" spacing={1}>

@@ -7,6 +7,7 @@ import {
   Card,
   CardContent,
 } from "@mui/material";
+import Swal from "sweetalert2";
 import FormIcon from "./FormIcon";
 import { fetchFromBackend } from "../../services/httpFetch";
 import { useDispatch } from "react-redux";
@@ -72,7 +73,16 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
     } catch (error) {
       console.error(error);
       setIsLoading(false);
-      alert(error);
+      Swal.fire({
+        title: "Error!",
+        text:
+          error instanceof Error
+            ? error.message
+            : String(error) ||
+              "Se produjo un error inesperado. Inténtalo de nuevo.",
+        icon: "error",
+        confirmButtonText: "Aceptar",
+      });
     }
   };
 

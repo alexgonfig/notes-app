@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography, Container, Grid2 } from "@mui/material";
+import { Typography, Container } from "@mui/material";
 import NoteForm from "../components/notes/NoteForm";
 
 const CreateNote: React.FC = () => {

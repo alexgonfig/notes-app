@@ -8,23 +8,24 @@ import {
   Button,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Chip from "@mui/material/Chip";
 
-export type NoteCardProps = {
+interface NoteCardProps {
   id: number;
   title: string;
   content: string;
   updated_at: string;
-};
+  onDeleteHandler: () => void;
+}
 
 const NoteCard: React.FC<NoteCardProps> = ({
   id,
   title,
   content,
   updated_at,
+  onDeleteHandler,
 }) => {
   return (
     <Grid2
@@ -50,7 +51,11 @@ const NoteCard: React.FC<NoteCardProps> = ({
                 <Link to={`/editNote/${id}`}>
                   <EditIcon color="primary" />
                 </Link>
-                <DeleteIcon color="error" />
+                <DeleteIcon
+                  color="error"
+                  sx={{ cursor: "pointer" }}
+                  onClick={onDeleteHandler}
+                />
               </CardActions>
             </Grid2>
           </Grid2>

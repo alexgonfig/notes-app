@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import ViewNote from "./pages/ViewNote";
 import CreateNote from "./pages/CreateNote";
 import EditNote from "./pages/EditNote";
+import NotFound from "./pages/NotFound";
 
 const AppRouter: React.FC = () => {
   return (
@@ -15,6 +16,7 @@ const AppRouter: React.FC = () => {
         <Route path="/createNote" element={<CreateNote />} />
         <Route path="/editNote/:noteId" element={<EditNote />} />
         <Route path="/note/:noteId" element={<ViewNote />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );

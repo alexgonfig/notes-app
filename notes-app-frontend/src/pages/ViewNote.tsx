@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { Typography, Container, Grid2 } from "@mui/material";
+import Swal from "sweetalert2";
+import { Typography, Container } from "@mui/material";
 import { Note, fetchNoteById } from "../services/notes";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import NoteDetails from "../components/notes/NoteDetails";
+import { deleteNote } from "../services/notes";
+import NoteNotFound from "../components/login/NoteNotFound";
 
 const ViewNote: React.FC = () => {
+  const navigate = useNavigate();
   const [note, setNote] = useState<Note | undefined>();
   const { noteId } = useParams();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const access_token = useSelector(
     (state: RootState) => state.auth.access_token
   );
@@ -18,11 +23,35 @@ const ViewNote: React.FC = () => {
 
   const fetchNote = async () => {
     try {
+      setIsLoading(true);
       const note = await fetchNoteById(access_token, noteId, signal);
       setNote(note);
+      setIsLoading(false);
     } catch (error) {
       console.error(error);
       alert(error);
+      setIsLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      const isDeleted = await deleteNote(noteId, access_token, signal);
+      if (isDeleted) {
+        navigate("/");
+      }
+    } catch (error) {
+      console.error(error);
+      Swal.fire({
+        title: "Error!",
+        text:
+          error instanceof Error
+            ? error.message
+            : String(error) ||
+              "Se produjo un error inesperado. Inténtalo de nuevo.",
+        icon: "error",
+        confirmButtonText: "Aceptar",
+      });
     }
   };
 
@@ -32,12 +61,16 @@ const ViewNote: React.FC = () => {
     return () => {
       controller.abort();
     };
-  }, [noteId, access_token]);
-  
+  }, []);
+
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
-      {!note && <Typography variant="body1">Cargando datos de la nota...</Typography>}
-      {note && <NoteDetails {...note} />}
+      {isLoading && !note && (
+        <Typography variant="body1">Cargando datos de la nota...</Typography>
+      )}
+
+      {!note && <NoteNotFound />}
+      {note && <NoteDetails {...note} onDeleteHandler={handleDelete} />}
     </Container>
   );
 };

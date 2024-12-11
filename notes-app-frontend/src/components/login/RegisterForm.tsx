@@ -7,6 +7,7 @@ import {
   Card,
   CardContent,
 } from "@mui/material";
+import Swal from "sweetalert2";
 import FormIcon from "./FormIcon";
 import { fetchFromBackend } from "../../services/httpFetch";
 
@@ -59,7 +60,12 @@ const RegisterForm: React.FC<RegisterFormProps> = (
 
       console.log(response);
       setIsLoading(false);
-      alert("Registro exitoso!, Ahora puedes ingresar!");
+      await Swal.fire({
+        title: "Bien!",
+        text:"Registro exitoso!, Ahora puedes ingresar!",
+        icon: "success",
+        confirmButtonText: "Aceptar",
+      });
       setFormData({
         username: "",
         password: "",
@@ -71,7 +77,16 @@ const RegisterForm: React.FC<RegisterFormProps> = (
     } catch (error) {
       console.error(error);
       setIsLoading(false);
-      alert(error);
+      Swal.fire({
+        title: "Error!",
+        text:
+          error instanceof Error
+            ? error.message
+            : String(error) ||
+              "Se produjo un error inesperado. Inténtalo de nuevo.",
+        icon: "error",
+        confirmButtonText: "Aceptar",
+      });
     }
   };
 
