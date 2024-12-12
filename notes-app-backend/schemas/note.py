@@ -58,3 +58,8 @@ class NoteResponse(BaseModel):
     class Config:
         orm_mode = True
         from_attributes = True
+
+
+class SaveNoteResponse(BaseModel):
+    message: str
+    noteId: int

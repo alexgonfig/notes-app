@@ -2,16 +2,18 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
+from fastapi.openapi.utils import get_openapi
 from routes import api_router
 import os
 
 
-app = FastAPI()
+app = FastAPI(title="Notes App API",
+              version="1.0.0",
+              )
 
 # allowed origins
 origins = [
-    os.getenv("FRONTEND_ORIGIN"),  # frontend origin
-    "http://localhost:3000",  # fallback alternate frontend origin
+    os.getenv("FRONTEND_ORIGIN")  # frontend origin
 ]
 
 app.add_middleware(

@@ -17,7 +17,8 @@ async def get_note_by_id(note_id: int, user_id: int, db_session: AsyncSession):
 
 async def get_all_notes(user_id: int, db_session: AsyncSession):
     result = await db_session.execute(
-        select(Note).where(Note.user_id == user_id).order_by(desc(Note.updated_at))
+        select(Note).where(Note.user_id == user_id).order_by(
+            desc(Note.updated_at))
     )
     return [NoteResponse.from_orm(note) for note in result.scalars()]
 
@@ -52,7 +53,8 @@ async def update_note(note_id: int, note: NoteUpdate, db_session: AsyncSession, 
         raise ValueError("No se encontró la nota")
 
     if note.updated_at != existing_note.updated_at:
-        raise ValueError("La versión de la nota no coincide con la actual, vuelva a cargar la página para cargar la versión más reciente")
+        raise ValueError(
+            "La versión de la nota no coincide con la actual, vuelva a cargar la página para cargar la versión más reciente")
 
     sanitized_title = sanitize_input(note.title)
     sanitized_content = sanitize_input(note.content)
@@ -84,4 +86,4 @@ async def delete_note(note_id: int, db_session: AsyncSession, token_payload: dic
     await db_session.commit()
 
     # Return confirmation response
-    return {"message": "La nota fue eliminada exitosamente"}
+    return {"message": "La nota fue eliminada exitosamente", "noteId": note_id}
