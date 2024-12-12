@@ -15,14 +15,16 @@ import {
   EditNote as EditNoteIcon,
   Notes as NotesIcon,
 } from "@mui/icons-material";
-
-import { useDispatch } from "react-redux";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../store/store";
 import { logout } from "../../store/slices/authSlice";
 import { Link } from "react-router-dom";
 
 const Navbar: React.FC = () => {
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const user = useSelector((state: RootState) => state.auth.user);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -42,6 +44,7 @@ const Navbar: React.FC = () => {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           NOTES-APP
         </Typography>
+
         <IconButton
           size="large"
           edge="end"
@@ -49,7 +52,11 @@ const Navbar: React.FC = () => {
           aria-label="menu"
           onClick={handleMenuOpen}
         >
-          <MoreVertIcon />
+          <AccountCircleIcon sx={{ mr: 2 }} />
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            {user.username}
+          </Typography>
+          <MoreVertIcon sx={{ ml: 2 }} />
         </IconButton>
         <Menu
           anchorEl={anchorEl}
