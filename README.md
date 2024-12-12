@@ -1,3 +1,35 @@
+# Requisitos del Entorno
+
+### Backend
+
+- Versión de Python
+
+El backend de esta aplicación es compatible solo con Python 3.12.8 o versiones inferiores debido a que la librería psycopg2 (utilizada para interactuar con PostgreSQL) no es completamente compatible con versiones más recientes de Python. Asegúrate de tener instalada una versión adecuada de Python antes de proceder con la instalación de las dependencias.
+
+Para verificar tu versión de Python, ejecuta el siguiente comando en tu terminal:
+
+      python --version
+
+### Frontend
+
+- Node.js: Se necesita Node.js para ejecutar el frontend. Se recomienda instalar la versión LTS (Long-Term Support). Puedes verificar la versión instalada con:
+   
+      node --version
+
+Si no tienes Node.js instalado, puedes descargarlo desde nodejs.org.
+
+- npm: El gestor de paquetes de Node.js (npm) se usa para instalar dependencias del frontend. Normalmente se instala junto con Node.js, pero si por alguna razón no está disponible, puedes instalarlo manualmente desde el mismo sitio web.
+
+Verifica que npm está instalado con:
+
+      npm --version
+
+### Otros Requisitos
+
+- PostgreSQL: El backend utiliza PostgreSQL como base de datos. Asegúrate de tener PostgreSQL instalado y en funcionamiento. Puedes descargarlo desde postgresql.org.
+
+También necesitarás crear una base de datos y un usuario con los privilegios correspondientes.
+
 # Configuración del Entorno
 
 ### Frontend
@@ -87,9 +119,9 @@ FastAPI genera automáticamente una interfaz de documentación interactiva usand
 
 Para acceder a la documentación de tu API, abre tu navegador y dirígete a la URL de tu servidor backend:
 
--Swagger UI:
+- Swagger UI:
 
-    http://127.0.0.1:8000/docs
+       http://127.0.0.1:8000/docs
 
  Esta interfaz te permitirá ver todas las rutas de la API, sus parámetros, y probar las solicitudes directamente desde el navegador.
 
@@ -98,9 +130,9 @@ Para acceder a la documentación de tu API, abre tu navegador y dirígete a la U
 
 También puedes acceder a una versión alternativa de la documentación utilizando ReDoc, que presenta una estructura más detallada y ordenada:
 
--ReDoc:
+- ReDoc:
 
-    http://127.0.0.1:8000/redoc
+       http://127.0.0.1:8000/redoc
 
 Ambas interfaces ofrecen una experiencia interactiva para probar y entender cómo funciona tu API, lo que facilita el desarrollo y la integración de nuevos servicios o consumidores.
 
@@ -114,9 +146,9 @@ En esta aplicación se implementó un bloqueo optimista para gestionar las actua
 
 Cuando un usuario edita una nota, el sistema guarda la fecha y hora de la última actualización en el campo updated_at de la nota. Al intentar guardar los cambios, el sistema compara la fecha de updated_at de la nota que se está editando (note.updated_at) con la fecha de la nota almacenada en la base de datos (existing_note.updated_at).
 
-   -Si las fechas coinciden, el sistema permite guardar los cambios, ya que no se ha producido ninguna modificación en la nota desde que el usuario la cargó.
+   - Si las fechas coinciden, el sistema permite guardar los cambios, ya que no se ha producido ninguna modificación en la nota desde que el usuario la cargó.
    
-   -Si las fechas no coinciden, significa que otra persona ha modificado la nota desde que el usuario la cargó. En este caso, se lanza una excepción que notifica al usuario que los cambios no pueden guardarse y le sugiere recargar la página para obtener la versión más reciente de la nota.
+   - Si las fechas no coinciden, significa que otra persona ha modificado la nota desde que el usuario la cargó. En este caso, se lanza una excepción que notifica al usuario que los cambios no pueden guardarse y le sugiere recargar la página para obtener la versión más reciente de la nota.
 
 Mensaje de Error
 
