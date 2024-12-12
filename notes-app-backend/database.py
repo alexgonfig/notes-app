@@ -16,6 +16,7 @@ db_password = os.getenv("DATABASE_PASS")
 db_name = os.getenv("DATABASE_NAME")
 db_host = os.getenv("DATABASE_HOST")
 db_port = os.getenv("DATABASE_PORT")
+db_test_name = os.getenv("DATABASE_TEST_NAME")
 
 # PostgreSQL database URL
 DATABASE_URL = f"postgresql+asyncpg://{db_username}:{db_password}@{db_host}:{db_port}/{db_name}"
