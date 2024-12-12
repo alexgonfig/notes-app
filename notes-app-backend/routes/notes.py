@@ -28,7 +28,7 @@ async def notes_create(note: NoteCreate, db_session: AsyncSession = Depends(get_
 
 # Update a user note
 @router.put("/{note_id}")
-async def notes_update(note_id: int, note: NoteCreate, db_session: AsyncSession = Depends(get_db_session), token_payload: dict = Depends(validate_auth)):
+async def notes_update(note_id: int, note: NoteUpdate, db_session: AsyncSession = Depends(get_db_session), token_payload: dict = Depends(validate_auth)):
     return await update_existing_note(note_id, note, db_session, token_payload)
 
 

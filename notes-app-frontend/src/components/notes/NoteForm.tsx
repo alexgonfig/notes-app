@@ -17,9 +17,15 @@ type NoteFormProps = {
   title?: string;
   content?: string;
   noteId?: string | number;
+  updated_at?: string;
 };
 
-const NoteForm: React.FC<NoteFormProps> = ({ title, content, noteId }) => {
+const NoteForm: React.FC<NoteFormProps> = ({
+  title,
+  content,
+  noteId,
+  updated_at,
+}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
@@ -30,10 +36,13 @@ const NoteForm: React.FC<NoteFormProps> = ({ title, content, noteId }) => {
   const [formData, setFormData] = useState({
     title: title || "",
     content: content || "",
+    updated_at: updated_at || "",
   });
 
   const apiPath = noteId ? `/api/notes/${noteId}` : "/api/notes/";
   const method = noteId ? "PUT" : "POST";
+
+  console.log(updated_at);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;

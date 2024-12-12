@@ -44,7 +44,7 @@ class NoteCreate(NoteBase):
 
 
 class NoteUpdate(NoteBase):
-    updated_at: Optional[datetime] = None
+    updated_at: datetime
 
 
 class NoteResponse(BaseModel):

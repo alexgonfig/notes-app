@@ -36,7 +36,7 @@ const Navbar: React.FC = () => {
     dispatch(logout());
   };
   return (
-    <AppBar position="static" color="primary" elevation={0}>
+    <AppBar position="static" color="primary" elevation={2}>
       <Toolbar>
         <EditNoteIcon sx={{ fontSize: "36px" }} />
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>

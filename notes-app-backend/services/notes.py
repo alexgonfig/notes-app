@@ -45,11 +45,14 @@ async def create_note(note: NoteCreate, db_session: AsyncSession, token_payload:
     return {"message": "Nota creada con exito!", "noteId": new_note.id}
 
 
-async def update_note(note_id: int, note: NoteUpdate, db_session: AsyncSession, token_payload: dict) -> NoteResponse:
+async def update_note(note_id: int, note: NoteUpdate, db_session: AsyncSession, token_payload: dict) -> dict:
     # Fetch the note to update
     existing_note = await get_note_by_id(note_id, token_payload["user_id"], db_session)
     if not existing_note:
         raise ValueError("No se encontró la nota")
+
+    if note.updated_at != existing_note.updated_at:
+        raise ValueError("La versión de la nota no coincide con la actual, vuelva a cargar la página para cargar la versión más reciente")
 
     sanitized_title = sanitize_input(note.title)
     sanitized_content = sanitize_input(note.content)
