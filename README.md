@@ -13,7 +13,7 @@
         # o
         yarn start
 
-3. Establecer variables de entorno creando el archivo .env dentro del directorio "notes-app-frontend/src". Asegúrate de que las variables en el archivo .env incluyan lo siguiente:
+3. Establecer variables de entorno creando el archivo .env dentro del directorio "notes-app-frontend/src". Utilizar el archivo .env.example como referencia para crear un archivo .env con las variables necesarias. Asegúrate de que las variables en el archivo .env incluyan lo siguiente:
 
         
    
@@ -53,11 +53,7 @@
         CREATE USER <user> WITH PASSWORD '<password>';
         GRANT ALL PRIVILEGES ON DATABASE <db_name> TO <user>;
 
-5. Establecer variables de entorno creando el archivo .env dentro de la raíz del directorio "notes-app-backend". Asegúrate de que las variables en el archivo .env incluyan lo siguiente:
-
-        Utilizar el archivo .env.example como referencia para crear un archivo .env con las variables necesarias.
-        
-        Asegúrate de que las variables en el archivo .env incluyan lo siguiente:
+5. Establecer variables de entorno creando el archivo .env dentro de la raíz del directorio "notes-app-backend". Utilizar el archivo .env.example como referencia para crear un archivo .env con las variables necesarias. Asegúrate de que las variables en el archivo .env incluyan lo siguiente:
         
         DATABASE_USERNAME=<your_db_username>
         DATABASE_PASS=<your_db_password>
