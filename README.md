@@ -13,7 +13,7 @@
         # o
         yarn start
 
-3. Establecer variables de entorno creando el archivo .env dentro del directorio "notes-app-frontend/src". Utilizar el archivo .env.example como referencia para crear un archivo .env con las variables necesarias. Asegúrate de que las variables en el archivo .env incluyan lo siguiente:
+3. Establecer variables de entorno creando el archivo .env dentro del directorio "notes-app-frontend". Utilizar el archivo .env.example como referencia para crear un archivo .env con las variables necesarias. Asegúrate de que las variables en el archivo .env incluyan lo siguiente:
 
         
    
